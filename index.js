@@ -37,6 +37,24 @@ async function run() {
       res.send(result);
   });
 
+  app.get('/tasks/user/:email', async(req,res)=>{
+    const email = req.params.email;
+  
+  const result = await TasksCollection.find({email}).toArray();
+  res.send(result)
+  })
+  app.post('/tasks', async(req,res)=>{
+    const AddNewTask = req.body;
+    console.log(AddNewTask);
+    const query = {title:AddNewTask.title}
+      const ExistingUser = await TasksCollection.findOne(query);
+      if(ExistingUser){
+        return res.send({message: 'Tasks Already Exists',insertedId: null})
+      }
+    const result = await TasksCollection.insertOne(AddNewTask);
+    res.send(result);
+  });
+
 
 
     // Connect the client to the server	(optional starting in v4.7)

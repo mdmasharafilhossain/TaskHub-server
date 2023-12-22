@@ -1,6 +1,6 @@
 const express = require('express');
 const cors = require('cors');
-const { MongoClient, ServerApiVersion } = require('mongodb');
+const { MongoClient, ServerApiVersion, ObjectId } = require('mongodb');
 
 
 const app = express();
@@ -54,6 +54,31 @@ async function run() {
     const result = await TasksCollection.insertOne(AddNewTask);
     res.send(result);
   });
+
+  app.put('/tasks/update/:id',async(req,res)=>{
+    const id = req.params.id;
+    const filter = {_id: new ObjectId(id)}
+    const options = {upsert:true}
+    const updatedProduct = req.body;
+
+    const Product = {
+      $set: {
+        title:updatedProduct.title,
+        description:updatedProduct.description,
+        
+      }
+    }
+
+    const result = await TasksCollection.updateOne(filter,Product,options);
+    res.send(result);
+  });
+  app.delete('/tasks/delete/:id', async(req,res)=>{
+    const id = req.params.id;
+    const query = {_id: new ObjectId(id)}
+    const result = await TasksCollection.deleteOne(query);
+    res.send(result);
+ });
+
 
 
 
